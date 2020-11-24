@@ -181,7 +181,7 @@ int main(){
    	ifstream VERALTA;
    	//Declaro variable para crar ficheros
 	ofstream TEMP;
-	ofstream llevar;
+	
 
 	int theme;
 	opycomp();
@@ -243,15 +243,16 @@ int main(){
     interfaz();
     gotoxy(100,3);printf("%d", user);
     //Imprimo los valores a elegir en el menu
-    gotoxy(45,10);printf("1-.DAR DE ALTA UN PRODUCTO");
-    gotoxy(45,12);printf("2-.VER PRODUCTOS EN ALTA");
-    gotoxy(45,14);printf("3-.BUSCAR PRODUCTO EN EXISTENCIA");
-    gotoxy(45,16);printf("4-.DAR DE BAJA UN PRODUCTO");
-    gotoxy(45,18);printf("5-.MODIFICAR");
-    gotoxy(45,20);printf("6-.CONFIGURACI%cN", 224);
-    gotoxy(45,22);printf("7-.VENDER");
+    gotoxy(45,9);printf("1-.DAR DE ALTA UN PRODUCTO");
+    gotoxy(45,11);printf("2-.VER PRODUCTOS EN ALTA");
+    gotoxy(45,13);printf("3-.BUSCAR PRODUCTO EN EXISTENCIA");
+    gotoxy(45,15);printf("4-.DAR DE BAJA UN PRODUCTO");
+    gotoxy(45,17);printf("5-.MODIFICAR");
+    gotoxy(45,19);printf("6-.CONFIGURACI%cN", 224);
+    gotoxy(45,21);printf("7-.VENDER");
+    gotoxy(45,21);printf("8-.AGREGAR A STOCK");
     //Seteo el cursor en esta posición
-    gotoxy(54,22);
+    gotoxy(54,24);
     //Escaneo la opcion "op"
     scanf("%d", &op);
     //Switch del menu con las opciones
@@ -269,7 +270,7 @@ int main(){
        		//Muestro el titulo
        		gotoxy(49,7);printf("DAR DE ALTA UN PRODUCTO");
        		//Muestro texto pidiendo los siguientes datos
-        	gotoxy(35,9);printf("TECLEE EL NOMBRE DEL PRODUCTO: ");
+        	gotoxy(35,9);printf("TECLEE EL NOMBRE DEL PRODUCTO (SIN ESPACIOS): ");
         	//Pido nombre del producto
        		scanf("%s",&nombreprod);
        		gotoxy(35,11);printf("DIGITE EL CODIGO DE BARRAS: ");
@@ -558,7 +559,7 @@ int main(){
 			//Abrir archivo temporal para modificación
 			ofstream TEMP("TEMP.txt",ios::out);
 			ofstream VENTA("VENTA",ios::app);
-			VENTA:
+			
 			//Bool de busqueda
 			bool encontrado=false;
 			
@@ -591,8 +592,8 @@ int main(){
 					scanf("%d",&ncantidad);
 					nncantidad=cantidad-ncantidad;
 					//Guardo este en el temporal ya creado
-					VENTA<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<nncantidad<<"  "<<precio<<endl;
-					TEMP<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<ncantidad<<"  "<<precio<<endl;
+					VENTA<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<ncantidad<<"  "<<precio<<endl;
+					TEMP<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<nncantidad<<"  "<<precio<<endl;
 					
 				}
 				//si no se encontró:
@@ -611,6 +612,133 @@ int main(){
 				gotoxy(50,14);cout<<"ID NO ENCONTRADO"<<endl;
 			}
 			gotoxy(40,25);printf("SEGUIRA COMPRANDO (1-SI) (0-NO): ");
+			scanf("%d", &cont);
+			//Cierro los ficheros (Archivos) para modificarlos
+			VERALTA.close();
+			TEMP.close();
+			//Elimino el principal
+			remove("ALTA.txt");
+			//Y renombro el temporal como principal
+			rename("TEMP.txt", "ALTA.txt");
+			//Cierro el case 5
+			
+			}while(cont==1);
+			
+			
+			
+			if(cont==0){
+					//Limpiar pantalla
+			ifstream VENTA;
+			int t;
+			t=0;
+         	system("cls");
+         	//Llamo al metodo interfaz
+       		interfaz();
+       		gotoxy(100,3);printf("%d", user);
+       		//Imprimo el titulo
+       		gotoxy(49,7);printf("VER PRODUCTOS EN EL TICKET");
+       		//Abro el fichero
+			VENTA.open("VENTA");
+			//Hago una lectura adelantada
+			VENTA>>IDproducto;
+			//Ciclo hasta que no se llegue al final del doc
+			while(!VENTA.eof())
+			    {
+			    //Lectura adelantada de lo siguiente
+               	VENTA>>nombreprod;
+               	VENTA>>codigobarras;
+               	VENTA>>cantidad;
+               	VENTA>>precio;
+               	//Dejo las 2 siguientes lineas
+               	cout<<endl;
+               	cout<<"                                                 "<<nombreprod<<"          "<<ncantidad<<"         $"<<precio<<endl;
+               	/*
+               	//Imprimo los datos leidos en el proceso
+       	    	cout<<"                                                 ID          "<<IDproducto<<endl;
+       	        cout<<"                                                 NOMBRE      "<<nombreprod<<endl;
+       	    	cout<<"                                                 CODIGO      "<<codigobarras<<endl;
+       	    	cout<<"                                                 CANTIDAD    "<<ncantidad<<endl;
+       	    	cout<<"                                                 PRECIO      "<<precio<<endl;
+       	    	//Dejo 2 lineas de separacion entre todos los resultados
+       	    	*/
+       	    	t+=precio;
+       	    	//Lectura adelatada para el siguiente producto
+       	        VENTA>>IDproducto;
+                }
+                
+                cout<<"                                                 SU TOTAL A PAGAR ES DE: $"<<t<<" PESOS"<<endl;
+                //Cierro el documento
+                VENTA.close();
+                remove("VENTA");
+                //Pauso la pantalla
+                system("pause");
+			}
+			break;
+		}
+		case 8:{
+			do{
+			
+			system("cls");
+			//Llamar al metodo interfaz
+			interfaz();
+			//Imprimir el usuario
+			gotoxy(100,3);printf("%d", user);
+			//Abrir el archivo de alta
+			VERALTA.open("ALTA.txt",ios::in);
+			//Abrir archivo temporal para modificación
+			ofstream TEMP("TEMP.txt",ios::out);
+			
+			//Bool de busqueda
+			bool encontrado=false;
+			
+			//Mostrar texto para el usuario
+			gotoxy(35,7);printf("INGRESE EL ID DEL PRODUCTO A AUMENTAR STOCK: ");
+			//Pedir id
+			scanf("%d", &BUSCARID);
+			//Lectura adelantada de ID
+			VERALTA>>IDproducto;
+			while(!VERALTA.eof()){
+				//Lectura de los datos completos
+				VERALTA>>nombreprod;
+				VERALTA>>codigobarras;
+				VERALTA>>cantidad;
+				//Si se encontró el id:
+				VERALTA>>precio;
+				//Comparacion de escaneado y encontrado por ID
+				if(IDproducto==BUSCARID){
+					//Se encontró el producto? si
+					encontrado=true;
+					//Mostrar lo entcontrado
+					cout<<"                                                 ID         "<<IDproducto<<endl;
+       	            cout<<"                                                 NOMBRE     "<<nombreprod<<endl;
+        	    	cout<<"                                                 CODIGO     "<<codigobarras<<endl;
+        	    	cout<<"                                                 CANTIDAD   "<<cantidad<<endl;
+					cout<<"                                                 PRECIO     "<<precio<<endl;
+					cout<<endl;
+					//Muestro texto para reemplazar datos y pido los reemplazos uno por uno
+					gotoxy(40,23);printf("INGRESE LA CANTIDAD DEL PRODUCTO LLEGADO: ");
+					scanf("%d",&ncantidad);
+					nncantidad=cantidad+ncantidad;
+					//Guardo este en el temporal ya creado
+					TEMP<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<nncantidad<<"  "<<precio<<endl;
+					
+				}
+				//si no se encontró:
+				else{
+					//Guardar todo en el temporal
+				TEMP<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<cantidad<<"  "<<precio<<endl;
+			}
+			//Lectura adelantada
+				VERALTA>>IDproducto;
+			}
+			//Si no se encontró:
+			if(encontrado==false){
+				//Color negro y rojo
+				
+				//Imprimir mensaje de status
+				gotoxy(50,14);cout<<"ID NO ENCONTRADO"<<endl;
+			}
+			gotoxy(40,25);printf("SEGUIRA AGREGANDO (1-SI) (0-NO): ");
 			scanf("%d", &cont);
 			//Cierro los ficheros (Archivos) para modificarlos
 			VERALTA.close();
@@ -661,7 +789,7 @@ else{
 				abort();
 			}
 			//Lectura de datos para el log in
-			clave>>user;
+		clave>>user;
 		clave>>contrasena;
 		//Cerrar el fichero de las claves de ingreso
 clave.close();
