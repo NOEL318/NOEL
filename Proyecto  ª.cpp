@@ -175,6 +175,12 @@ int main(){
 	int continuar;
 	int nncantidad;
 	int cont;
+	char nombreprov[50];
+	char nombrerep[50];
+	char dias[50];
+	
+	int ingresos;
+	ofstream REGISTRAR;
 	//Declar variable para leer ficheros
 	ifstream clave;
 	//Declado variable para leer ficheros en inventario
@@ -215,13 +221,11 @@ int main(){
 	scanf("%d", &bcontrasena);
 	//Hago una previzualización del archivo (Lectura adelantada) de usuario y contraseña
 	clave>>user;
-	clave>>contrasena;
 	//Declaro de tipo bool la variable encontrado para comprobar el estado de log
 	bool finded = true;
 	//Ciclo para buscar en el focumento hasta que no llegue al fin
 	while(!clave.eof()){
 		//Vuelvo a hacer una lectura del fichero de usuario y contraseña
-				clave>>user;
 				clave>>contrasena;
 				//Si los datos coinciden el estado es verdadero
 				if(buser==user && bcontrasena==contrasena){
@@ -250,9 +254,11 @@ int main(){
     gotoxy(45,17);printf("5-.MODIFICAR");
     gotoxy(45,19);printf("6-.CONFIGURACI%cN", 224);
     gotoxy(45,21);printf("7-.VENDER");
-    gotoxy(45,21);printf("8-.AGREGAR A STOCK");
+    gotoxy(45,23);printf("8-.AGREGAR A STOCK");
+    gotoxy(45,25);printf("9-.DAR DE ALTA UN PROVEDOR");
+    gotoxy(44,27);printf("10-.REPORTE DE INGRESOS");
     //Seteo el cursor en esta posición
-    gotoxy(54,24);
+    gotoxy(54,29);
     //Escaneo la opcion "op"
     scanf("%d", &op);
     //Switch del menu con las opciones
@@ -282,7 +288,7 @@ int main(){
        		gotoxy(35,15);printf("DIGITE LA CANTIDAD: ");
        		//Pido la cantidad con la que se cuenta actualmente
        		scanf("%d",&cantidad);
-       		gotoxy(35,17);printf("DIGITE EL PRECIO UNITARIO:: ");
+       		gotoxy(35,17);printf("DIGITE EL PRECIO UNITARIO: ");
        		//Pido precio del producto
        		scanf("%d",&precio);
        		//Los guardo en el fichero
@@ -543,7 +549,72 @@ int main(){
 			break;
 		}
 		case 6:{
-			config();
+			system("cls");
+			int configop;
+			int nuser;
+			int ncontrasena;
+			ofstream Guar("CLAVES.txt",ios::app);
+			clave.open("CLAVES.txt");
+			interfaz();
+			gotoxy(45,9);printf("1-.CONFIGURACI%cN",224);
+			gotoxy(45,11);printf("1-.DAR DE ALTA UN USUARIO");
+    		gotoxy(45,13);printf("2-.TEMA");
+    		gotoxy(45,15);printf("3-.VER ALTA DE PROVEEDORES");
+    		gotoxy(54,20);cin>>configop;
+    		switch(configop){
+    			case 1:{
+    				system("cls");
+    				interfaz();
+    				gotoxy(50,7);printf("DAR DE ALTA UN USUARIO");
+    				gotoxy(45,9);printf("INGRESE LOS DATOS DEL NUEVO USUARIO: ");
+    				gotoxy(55,13);printf("USUARIO: ");
+					scanf("%d", &nuser);
+					gotoxy(55,15);printf("CLAVE:   ");
+					scanf("%d", &ncontrasena);
+					Guar<<nuser<<"  "<<ncontrasena<<endl;
+					break;
+				}
+				case 2:{
+					config();
+					break;
+				}
+				case 3:{
+					//Limpiar pantalla
+        		 	system("cls");
+        	 		//Llamo al metodo interfaz
+       				interfaz();
+       				gotoxy(100,3);printf("%d", user);
+       				//Imprimo el titulo
+       				gotoxy(49,7);printf("VER PRODUCTOS EN ALTA\n");
+       				//Abro el fichero
+					VERALTA.open("PROVEEDORES.txt");
+					//Hago una lectura adelantada
+					VERALTA>>nombreprov;
+					//Ciclo hasta que no se llegue al final del doc
+					while(!VERALTA.eof())
+			  		  {
+			  		VERALTA>>nombrerep;
+			  		VERALTA>>dias;
+			  		cout<<endl;
+       	    		cout<<endl;
+       	   		 	cout<<"                                                NOMBRE:              "<<nombreprov<<endl;
+       		        cout<<"                                                REPARTIDOR:          "<<nombrerep<<endl;
+      	 	    	cout<<"                                                DIAS QUE SURTE:      "<<dias<<endl;
+       	  		  	//Dejo 2 lineas de separacion entre todos los resultados
+       	  		  	cout<<endl;
+       	    		cout<<endl;
+       	    		//Lectura adelatada para el siguiente producto
+       	        	VERALTA>>nombreprov;
+                	}
+                	//Cierro el documento
+                	VERALTA.close();
+                	//Pauso la pantalla
+                	system("pause");
+                	//Cierro el case y lo pauso
+					break;
+				}
+			}
+			
 			break;
 		}
 		case 7:{
@@ -560,6 +631,7 @@ int main(){
 			ofstream TEMP("TEMP.txt",ios::out);
 			ofstream VENTA("VENTA",ios::app);
 			
+			
 			//Bool de busqueda
 			bool encontrado=false;
 			
@@ -574,6 +646,7 @@ int main(){
 				VERALTA>>nombreprod;
 				VERALTA>>codigobarras;
 				VERALTA>>cantidad;
+				int i;
 				//Si se encontró el id:
 				VERALTA>>precio;
 				//Comparacion de escaneado y encontrado por ID
@@ -591,9 +664,11 @@ int main(){
 					gotoxy(40,23);printf("INGRESE LA CANTIDAD A LLEVAR: ");
 					scanf("%d",&ncantidad);
 					nncantidad=cantidad-ncantidad;
+					i+=precio;
 					//Guardo este en el temporal ya creado
 					VENTA<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<ncantidad<<"  "<<precio<<endl;
 					TEMP<<IDproducto<<"  "<<nombreprod<<"  "<<codigobarras<<"  "<<nncantidad<<"  "<<precio<<endl;
+					
 					
 				}
 				//si no se encontró:
@@ -639,6 +714,7 @@ int main(){
        		gotoxy(49,7);printf("VER PRODUCTOS EN EL TICKET");
        		//Abro el fichero
 			VENTA.open("VENTA");
+			ofstream REGISTRAR("INGRESOS.txt",ios::app);
 			//Hago una lectura adelantada
 			VENTA>>IDproducto;
 			//Ciclo hasta que no se llegue al final del doc
@@ -652,16 +728,9 @@ int main(){
                	//Dejo las 2 siguientes lineas
                	cout<<endl;
                	cout<<"                                                 "<<nombreprod<<"          "<<ncantidad<<"         $"<<precio<<endl;
-               	/*
-               	//Imprimo los datos leidos en el proceso
-       	    	cout<<"                                                 ID          "<<IDproducto<<endl;
-       	        cout<<"                                                 NOMBRE      "<<nombreprod<<endl;
-       	    	cout<<"                                                 CODIGO      "<<codigobarras<<endl;
-       	    	cout<<"                                                 CANTIDAD    "<<ncantidad<<endl;
-       	    	cout<<"                                                 PRECIO      "<<precio<<endl;
-       	    	//Dejo 2 lineas de separacion entre todos los resultados
-       	    	*/
+               	precio=cantidad*precio;
        	    	t+=precio;
+       	    	REGISTRAR<<t<<endl;
        	    	//Lectura adelatada para el siguiente producto
        	        VENTA>>IDproducto;
                 }
@@ -669,6 +738,7 @@ int main(){
                 cout<<"                                                 SU TOTAL A PAGAR ES DE: $"<<t<<" PESOS"<<endl;
                 //Cierro el documento
                 VENTA.close();
+                REGISTRAR.close();
                 remove("VENTA");
                 //Pauso la pantalla
                 system("pause");
@@ -752,6 +822,66 @@ int main(){
 			}while(cont==1);
 			break;
 		}
+		case 9:{
+			system("cls");
+       		//Llamo al metodo interfaz
+       		interfaz();
+       		gotoxy(100,3);printf("%d", user);
+       		//Creo el fichero ALTA para guardar los productos
+       		ofstream Guardar("PROVEEDORES.txt",ios::app);
+       		//Muestro el titulo
+       		gotoxy(49,7);printf("DAR DE ALTA UN PROVEEDOR");
+       		//Muestro texto pidiendo los siguientes datos
+        	gotoxy(35,9);printf("TECLEE EL NOMBRE DEL PROVEEDOR (SIN ESPACIOS): ");
+        	//Pido nombre del producto
+       		scanf("%s",&nombreprov);
+       		gotoxy(35,11);printf("DIGITE EL NOMBRE DEL REPARTIDOR (SIN ESPACIOS): ");
+       		//Pido codigo de barras
+       		scanf("%s",&nombrerep);
+       		gotoxy(35,13);printf("DIGITE LA LETRA DEL DIA EN QUE SURTE (SIN ESPACIOS): ");
+       		//Pido el ID del producto
+       		scanf("%s",&dias);
+       		//Los guardo en el fichero
+        	Guardar<<nombreprov<<"  "<<nombrerep<<"  "<<dias<<endl;
+        	//Cambio el color de la pantalla
+       		system("color 0a");
+       		//Imprimo un estatus
+       		gotoxy(40,20);printf("SU PROVEEDOR SE DIO DE ALTA CORRECTAMENTE");
+       		//Finalizo en case
+       		break;
+		}
+			case 10:{
+			int t;
+			int i;
+			ifstream INGRESO;
+			system("cls");
+         	//Llamo al metodo interfaz
+       		interfaz();
+       		gotoxy(100,3);printf("%d", user);
+       		//Imprimo el titulo
+       		gotoxy(49,7);printf("VER PRODUCTOS EN EL TICKET");
+       		//Abro el fichero
+			INGRESO.open("INGRESOS.txt");
+			//Hago una lectura adelantada
+			INGRESO>>t;
+			t=t+0;
+			//Ciclo hasta que no se llegue al final del doc
+			while(!INGRESO.eof())
+			    {
+               	//Dejo las 2 siguientes lineas
+               	cout<<endl;
+       	    	i+=t;
+       	    	//Lectura adelatada para el siguiente producto
+       	        INGRESO>>t;
+                }
+                
+                cout<<"                                           SU TOTAL DE INGRESOS ES DE: $"<<i<<" PESOS"<<endl;
+                //Cierro el documento
+                INGRESO.close();
+                //Pauso la pantalla
+                system("pause");
+                break;
+			}
 		//Si no se selecciona una opcion valida en el menu
 		default:
 			//Llamar al metodo interfaz
@@ -764,17 +894,22 @@ int main(){
 			gotoxy(50,14);printf("ID DE OPCI%cN NO ENCONTRADO", 224);
 			//cierro el case default
 		break;
-		
-		
 		}
+		
+		
+		
+		
 		//mensaje para cada terminar proceso de cada sub menu
 	gotoxy(35,27);printf("PRESIONA CUALQUIER TECLA PARA SALIR AL MENU PRINCIPAL");
 	//Hago una pausa
 	getch();
 }
+clave>>contrasena;	
+}
+clave>>user;
 }
 //si no pasa el log in:
-else{
+if(finded==false){
 				//Color rojo y negro
 				system("color 0c");
 				//Mostrar texto de error
@@ -789,8 +924,6 @@ else{
 				abort();
 			}
 			//Lectura de datos para el log in
-		clave>>user;
-		clave>>contrasena;
 		//Cerrar el fichero de las claves de ingreso
 clave.close();
-}}
+}
