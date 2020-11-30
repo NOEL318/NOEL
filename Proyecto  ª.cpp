@@ -274,6 +274,10 @@ int main(){
 	
 	int ingresos;
 	
+	int noprov;
+	
+	int bnoprov;
+	
 	ofstream REGISTRAR;
 	
 	ifstream clave;
@@ -541,7 +545,7 @@ int main(){
 				if(IDproducto==BUSCARID){
 				
 					encontrado=true;
-			
+					cout<<endl;
 					cout<<"                                                 ID         "<<IDproducto<<endl;
        	            cout<<"                                                 NOMBRE     "<<nombreprod<<endl;
         	    	cout<<"                                                 CODIGO     "<<codigobarras<<endl;
@@ -612,7 +616,7 @@ int main(){
 				if(IDproducto==BUSCARID){
 					
 					encontrado=true;
-				
+					cout<<endl;
 					cout<<"                                                 ID         "<<IDproducto<<endl;
        	            cout<<"                                                 NOMBRE     "<<nombreprod<<endl;
         	    	cout<<"                                                 CODIGO     "<<codigobarras<<endl;
@@ -675,7 +679,8 @@ int main(){
     		gotoxy(45,13);printf("2-.TEMA");
     		gotoxy(45,15);printf("3-.VER ALTA DE PROVEEDORES");
     		gotoxy(45,17);printf("4-.DAR DE ALTA UN PROVEEDOR");
-    		gotoxy(54,20);cin>>configop;
+    		gotoxy(45,19);printf("5-.DAR DE BAJA UN PROVEEDOR");
+    		gotoxy(54,21);cin>>configop;
     		switch(configop){
     			case 1:{
     				system("cls");
@@ -704,22 +709,27 @@ int main(){
        				
 					VERALTA.open("PROVEEDORES.txt");
 					
-					VERALTA>>nombreprov;
+					VERALTA>>noprov;
 				
 					while(!VERALTA.eof())
 			  		  {
-			  		VERALTA>>nombrerep;
-			  		VERALTA>>dias;
-			  		cout<<endl;
-       	    		cout<<endl;
-       	   		 	cout<<"                                                NOMBRE:              "<<nombreprov<<endl;
-       		        cout<<"                                                REPARTIDOR:          "<<nombrerep<<endl;
-      	 	    	cout<<"                                                DIAS QUE SURTE:      "<<dias<<endl;
+			  			VERALTA>>nombreprov;
+			  			
+			  			VERALTA>>nombrerep;
+			  			
+			  			VERALTA>>dias;
+			  			
+			  			cout<<endl;
+       	    			cout<<endl;
+       	    			cout<<"                                                NUMERO DE PROVEEDOR:       "<<noprov<<endl;
+       	   			 	cout<<"                                                NOMBRE:                    "<<nombreprov<<endl;
+       		   		    cout<<"                                                REPARTIDOR:                "<<nombrerep<<endl;
+      	 	 	 	  	cout<<"                                                DIAS QUE SURTE:            "<<dias<<endl;
        	  		  	
-       	  		  	cout<<endl;
-       	    		cout<<endl;
+       	  		  		cout<<endl;
+       	    			cout<<endl;
        	    	
-       	        	VERALTA>>nombreprov;
+       	        		VERALTA>>noprov;
                 	}
                 
                 	VERALTA.close();
@@ -734,21 +744,23 @@ int main(){
        				interfaz();
        				gotoxy(100,3);printf("%d", user);
        	
-       				ofstream Guardar("PROVEEDORES.txt",ios::app);
+       				ofstream Guard("PROVEEDORES.txt",ios::app);
        	
        				gotoxy(49,7);printf("DAR DE ALTA UN PROVEEDOR");
+       				
+       				gotoxy(35,9);printf("DIGITE EL NUMERO DE PROVEEDOR: ");
+       				scanf("%d",&noprov);
        		
-        			gotoxy(35,9);printf("TECLEE LA MARCA (SIN ESPACIOS): ");
-        
+        			gotoxy(35,11);printf("TECLEE LA MARCA (SIN ESPACIOS): ");
        				scanf("%s",&nombreprov);
-       				gotoxy(35,11);printf("DIGITE EL NOMBRE O NOMBRES DEL REPARTIDOR (SIN ESPACIOS): ");
-       		
+       				
+       				gotoxy(35,13);printf("DIGITE EL NOMBRE O NOMBRES DEL REPARTIDOR (SIN ESPACIOS): ");
        				scanf("%s",&nombrerep);
-       				gotoxy(35,13);printf("DIGITE LA LETRA DEL DIA EN QUE SURTE (SIN ESPACIOS): ");
-       		
+       				
+       				gotoxy(35,15);printf("DIGITE LA LETRA DEL DIA EN QUE SURTE (SIN ESPACIOS): ");
        				scanf("%s",&dias);
        		
-        			Guardar<<nombreprov<<"  "<<nombrerep<<"  "<<dias<<endl;
+        			Guard<<noprov<<"  "<<nombreprov<<"  "<<nombrerep<<"  "<<dias<<endl;
      
        				system("color 0a");
        		
@@ -756,6 +768,73 @@ int main(){
    
        				break;
 					}
+				case 5:{
+					system("cls");
+		
+					interfaz();
+		
+					gotoxy(100,3);printf("%d", user);
+			
+					VERALTA.open("PROVEEDORES.txt",ios::in);
+		
+					ofstream TEMP("TEMP.txt",ios::app);
+			
+					
+		
+					bool encontrado=false;
+			
+					gotoxy(35,7);printf("INGRESE EL ID DEL PROVEEDOR A ELIMINAR: ");
+					scanf("%d", &bnoprov);
+					VERALTA>>noprov;
+					while(!VERALTA.eof()){
+					
+						VERALTA>>nombreprov;
+						
+						VERALTA>>nombrerep;
+						
+			  			VERALTA>>dias;
+				
+						if(noprov==bnoprov){
+				
+							encontrado=true;
+								cout<<endl;
+								cout<<"                                                 NUMERO DE PROOVEDOR:        "<<noprov<<endl;
+       	        			    cout<<"                                                 MARCA:                      "<<nombreprov<<endl;
+        	   				 	cout<<"                                                 REPARTIDOR:                 "<<nombrerep<<endl;
+        	   				 	cout<<"                                                 DIAS QUE SURTE:             "<<dias<<endl;
+        	    			
+								cout<<endl;
+					
+						}
+				
+					else{
+					
+						TEMP<<noprov<<"  "<<nombreprov<<"  "<<nombrerep<<"  "<<dias<<endl;
+				
+					}
+				
+					VERALTA>>noprov;
+				}
+		
+			
+		
+			if(encontrado==false){
+			
+				system("color 0c");
+			
+				gotoxy(40,14);cout<<"ID NO ENCONTRADO"<<endl;
+				
+			}
+
+			VERALTA.close();
+			
+			TEMP.close();
+		
+			remove("PROVEEDORES.txt");
+		
+			rename("TEMP.txt", "PROVEEDORES.txt");
+					break;
+				}
 				
 			}
 			
@@ -973,12 +1052,12 @@ int main(){
        		interfaz();
        		gotoxy(100,3);printf("%d", user);
        	
-       		gotoxy(49,7);printf("VER PRODUCTOS EN EL TICKET");
+       		gotoxy(49,7);printf("REPORTE DE INGRESOS");
        		
 			INGRESO.open("INGRESOS.txt");
 		
 			INGRESO>>t;
-			t=t+0;
+			
 			
 			while(!INGRESO.eof())
 			    {
@@ -990,7 +1069,7 @@ int main(){
                 }
                 
                 cout<<"                                           SU TOTAL DE INGRESOS ES DE: $"<<i<<" PESOS"<<endl;
-            
+            i=0;
                 INGRESO.close();
         
                 system("pause");
