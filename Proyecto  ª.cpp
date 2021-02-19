@@ -1045,7 +1045,7 @@ int main(){
 		}
 			case 9:{
 			int t;
-			int i;
+			int i=0;
 			ifstream INGRESO;
 			system("cls");
          	
@@ -1061,15 +1061,15 @@ int main(){
 			
 			while(!INGRESO.eof())
 			    {
+			   	i+=t;
                
                	cout<<endl;
-       	    	i+=t;
+       	    	
        	    
        	        INGRESO>>t;
                 }
                 
                 cout<<"                                           SU TOTAL DE INGRESOS ES DE: $"<<i<<" PESOS"<<endl;
-            i=0;
                 INGRESO.close();
         
                 system("pause");
